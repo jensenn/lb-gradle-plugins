@@ -38,6 +38,10 @@ subprojects {
         compile localGroovy()
 
         testCompile "junit:junit:$junitVersion"
+		testCompile ('org.spockframework:spock-core:0.7-groovy-1.8') {
+			exclude module: "junit-dep"
+			exclude module: "groovy-all"
+		}
     }
 
     jar {
@@ -70,42 +74,6 @@ subprojects {
         archives sourcesJar
     }
 
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-
-                repository(url: deploySnapshot) {
-                    authentication(
-                        userName: "${project.ciUsr}",
-                        password: "${project.ciPwd}"
-                    )
-                }
-
-                pom {
-                    project {
-                        name = "${project.prefix}-${project.name}"
-                        description = "${group}.${project.prefix}-${project.name}"
-                        url = "${project.gitProject}"
-                        packaging = 'jar'
-
-                        licenses {
-                            license {
-                                name = "The Apache Software License, Version 2.0"
-                                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                                distribution = "repo"
-                            }
-                        }
-
-                        scm {
-                            url = "${project.gitProject}"
-                            connection = "scm:git:${project.gitProject}.git"
-                            developerConnection = "scm:git:${project.gitProject}.git"
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 // *****************************************************************************

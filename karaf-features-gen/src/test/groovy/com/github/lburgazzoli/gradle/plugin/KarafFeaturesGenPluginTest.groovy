@@ -16,21 +16,68 @@
  */
 package com.github.lburgazzoli.gradle.plugin
 
-import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Test
-
-import static org.junit.Assert.assertTrue
+import com.eriwen.gradle.js.util.FunctionalSpec
 
 /**
  *
  */
-class KarafFeaturesGenPluginTest {
-    @Test
-    public void karafFeatursegenPluginAddsTaskzToProject() {
-        Project project = ProjectBuilder.builder().build()
-        project.apply plugin: 'karaf-featuresgen'
+class KarafFeaturesGenPluginTest extends FunctionalSpec {
 
-        assertTrue(project.tasks.generateKarafFeatures instanceof KarafFeaturesGenTask)
+    def "karaf feature file generation"() {
+        given:
+        buildFile <<
+"""
+apply plugin: 'java'
+
+buildscript {
+    dependencies {
+        classpath files('../../../../libs/karaf-features-gen-1.0.0.SNAPSHOT.jar')
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'karaf-featuresgen'
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.11.0'
+}
+
+karafFeatures {
+    excludes = [
+        'org.slf4j/.*',
+        'log4j/.*',
+        'org.osgi/.*',
+        'org.apache.felix/.*',
+        'org.apache.karaf.shell/.*'
+    ]
+
+    wraps = [
+        'com.google.guava/guava/.*'
+    ]
+
+    startLevels = [
+        'org.apache.geronimo.specs/.*':'50',
+        'org.apache.commons/.*':'60',
+    ]
+
+    extraBundles = [
+        'foo'
+    ]
+
+    outputFile = new File('$dir.dir.absolutePath/features.xml')
+}
+"""
+		when:
+        run "generateKarafFeatures"
+
+		then:
+        file("features.xml").text.indexOf('<bundle>mvn:org.scala-lang/scala-library/2.11.0</bundle>') > -1
+        file("features.xml").text.indexOf('<bundle>foo</bundle>') > -1
+        
+        and:
+        wasExecuted ":generateKarafFeatures"
     }
 }
