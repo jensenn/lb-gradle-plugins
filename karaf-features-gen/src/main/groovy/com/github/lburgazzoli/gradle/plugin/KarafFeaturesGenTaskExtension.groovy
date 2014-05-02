@@ -19,9 +19,9 @@ package com.github.lburgazzoli.gradle.plugin
  * Extensions for KarafFeaturesGenTask
  */
 class KarafFeaturesGenTaskExtension {
-    String[] excludes = [];
-    String[] wraps = [];
+    List<String> excludes = [];
+    List<String> wraps = [];
     Map<String,String> startLevels = [:];
     File outputFile = null;
-	String[] extraBundles = [];
+	List<String> extraBundles = [];
 }
