@@ -9,5 +9,8 @@ out
 build
 .idea
 .gradle
+.project
+.settings
+.classpath
 
 
