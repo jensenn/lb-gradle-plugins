@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'maven'
 
     version      = '1.0.0.SNAPSHOT'
-    group        = 'com.github.lburgazzoli'
+    group        = 'com.github.njensen'
 
     ext {
         junitVersion     = '4.11'
@@ -74,6 +74,13 @@ subprojects {
         archives sourcesJar
     }
 
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "file:///data/git/maven-repository/")
+            }
+        }
+    }
 }
 
 // *****************************************************************************
